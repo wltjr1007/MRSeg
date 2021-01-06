@@ -2,49 +2,13 @@ import config
 import numpy as np
 
 def load_segment_data():
-    csv_path = config.project_path + "load_data/segmentation_fp.csv"
-    seg_csv_id_code = {}
-    seg_csv_id_stage = {}
-    fn_idx_dict = {}
-    with open(csv_path) as f:
-        for line in f.readlines()[1:]:
-            line_list = line.split(",")
-            seg_csv_id_code[line_list[0]] = int(line_list[1])
-            seg_csv_id_stage[line_list[0]] = int(line_list[2])
     mm_mode = "r"
     trn_dat = np.load(config.raw_data_path + "segment/trn_dat.npy", mmap_mode=mm_mode)
     trn_lbl = np.load(config.raw_data_path + "segment/trn_lbl.npy", mmap_mode=mm_mode)
-    trn_fn = np.load(config.raw_data_path + "segment/trn_fn.npy", mmap_mode=mm_mode)
     trn_bound_mask = np.load(config.raw_data_path + "segment/trn_bound_mask_2d.npy", mmap_mode=mm_mode)
+    trn_shp = np.load(config.raw_data_path + "segment/trn_shp.npy", mmap_mode=mm_mode)
 
-    tst_dat = np.load(config.raw_data_path + "segment/tst_dat.npy", mmap_mode=mm_mode)
-    tst_lbl = np.load(config.raw_data_path + "segment/tst_lbl.npy", mmap_mode=mm_mode)
-    tst_fn = np.load(config.raw_data_path + "segment/tst_fn.npy", mmap_mode=mm_mode)
-    tst_bound_mask = np.load(config.raw_data_path + "segment/tst_bound_mask_2d.npy", mmap_mode=mm_mode)
-
-    trn_idx = np.zeros(shape=(len(trn_dat), 2), dtype=np.uint16)
-    trn_code = np.zeros(shape=len(trn_dat), dtype=np.uint8)
-    trn_stg = np.zeros(shape=len(trn_dat), dtype=np.uint8)
-
-    tst_idx = np.zeros(shape=(len(tst_dat), 2), dtype=np.uint16)
-    tst_code = np.zeros(shape=len(tst_dat), dtype=np.uint8)
-    tst_stg = np.zeros(shape=len(tst_dat), dtype=np.uint8)
-
-    for cnt, fn in enumerate(trn_fn):
-        patid, imgid = fn[:-4].split("/")[-2:]
-        trn_code[cnt] = seg_csv_id_code[patid]
-        trn_stg[cnt] = seg_csv_id_stage[patid]
-        trn_idx[cnt] = imgid.split("_")
-        fn_idx_dict[patid] = trn_idx[cnt, 0]
-
-    for cnt, fn in enumerate(tst_fn):
-        patid, imgid = fn[:-4].split("/")[-2:]
-        tst_stg[cnt] = seg_csv_id_stage[patid]
-        tst_code[cnt] = seg_csv_id_code[patid]
-        tst_idx[cnt] = imgid.split("_")
-        fn_idx_dict[patid] = tst_idx[cnt, 0]
-    return (trn_dat, trn_lbl, trn_bound_mask, trn_idx, trn_code, trn_stg), (
-    tst_dat, tst_lbl, tst_bound_mask, tst_idx, tst_code, tst_stg), fn_idx_dict
+    return trn_dat, trn_lbl, trn_shp, trn_bound_mask
 
 def normalizePlanes(npzarray, transpose=True, clip=False, is_old=False):
     maxHU = 1200.

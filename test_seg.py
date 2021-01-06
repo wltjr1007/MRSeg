@@ -89,7 +89,7 @@ def normalizePlanes(npzarray, transpose=True, clip=False, is_old=False):
 
 dat, fn = load_data()
 
-deeplab_model = Deeplabv3(input_shape=(512, 512, 3), classes=3, activation="softmax")
+deeplab_model = Deeplabv3(input_shape=(512, 512, 3), classes=3)
 deeplab_model.load_weights(ckpt)
 
 
